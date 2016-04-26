@@ -66,7 +66,7 @@ namespace ConsoleApplication13
             //Console.WriteLine("RandomExit");
             return result;
         }
-        static void DrawGrid(bool[,] grid, int xSize, int ySize)
+        static void DrawGrid(bool[,] grid, int xSize = 20, int ySize = 20)
         {
            // Console.WriteLine("xsize:" + xSize);
            // Console.WriteLine("gridx" + grid);
@@ -161,10 +161,10 @@ namespace ConsoleApplication13
         static void Main(string[] args)
         {
            // Console.SetWindowSize(200, 150);
-            int xSize = 150;
+            int xSize = 155;
             int ySize = 35;
             int sleep = (1000 / 60) * 2;
-            bool [,] grid = GetRandomGrid(xSize,ySize, 2960);
+            bool [,] grid = GetRandomGrid(xSize,ySize, 2000);
             DrawGrid(grid, xSize, ySize);
             Console.ReadLine();
             for (int i = 0; i < 5000; i++)
