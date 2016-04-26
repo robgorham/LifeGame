@@ -160,10 +160,11 @@ namespace ConsoleApplication13
         }
         static void Main(string[] args)
         {
-            //Console.OutputEncoding = System.Text.Encoding.Unicode;
-            int xSize = 100;
+           // Console.SetWindowSize(200, 150);
+            int xSize = 150;
             int ySize = 35;
-            bool [,] grid = GetRandomGrid(xSize,ySize, 2950);
+            int sleep = (1000 / 60) * 2;
+            bool [,] grid = GetRandomGrid(xSize,ySize, 2960);
             DrawGrid(grid, xSize, ySize);
             Console.ReadLine();
             for (int i = 0; i < 5000; i++)
@@ -171,7 +172,7 @@ namespace ConsoleApplication13
                 Console.Clear();
                 grid = EvaluateGrid(grid,xSize,ySize);
                 DrawGrid(grid,xSize,ySize);
-                System.Threading.Thread.Sleep(45);
+                System.Threading.Thread.Sleep(sleep);
             }
             Console.ReadLine();
         }
