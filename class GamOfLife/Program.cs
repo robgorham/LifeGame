@@ -38,6 +38,21 @@ namespace ConsoleApplication13
         /// <param name="grid">bool[,]</param>
         /// <param name="xSize">integer that is 20 by default</param>
         /// <param name="ySize">integer that is 20 by default</param>
+        static bool[,] getBool(int xSize, int ySize, bool val)
+        {
+            bool[,] result = new bool[ySize, xSize];
+            for (int i = 0; i < ySize; i++)
+            {
+                for (int j = 0; j < xSize; j++)
+                {
+                    result[i, j] = val;
+                }
+            }
+
+
+            return result;
+        }
+
         static void init(out bool[,] grid, int xSize = 20, int ySize = 20)
         {
             bool[,] result = new bool[ySize, xSize];
@@ -46,8 +61,10 @@ namespace ConsoleApplication13
                 for (int j = 0; j < xSize; j++)
                 {
                     result[i, j] = false;
+
                 }
             }
+
             grid = result;
         }
         static bool[,] GetRandomGrid(int xSize = 20, int ySize = 20, int lifeCount = 100)
@@ -57,19 +74,19 @@ namespace ConsoleApplication13
             Random rnd = new Random();
             int x = 0;
             int y = 0;
-            for(int i = 0; i < lifeCount;i++)
+            for (int i = 0; i < lifeCount; i++)
             {
                 x = rnd.Next(xSize);
                 y = rnd.Next(ySize);
-                result[y,x]= true;
+                result[y, x] = true;
             }
             //Console.WriteLine("RandomExit");
             return result;
         }
         static void DrawGrid(bool[,] grid, int xSize = 20, int ySize = 20)
         {
-           // Console.WriteLine("xsize:" + xSize);
-           // Console.WriteLine("gridx" + grid);
+            // Console.WriteLine("xsize:" + xSize);
+            // Console.WriteLine("gridx" + grid);
             for (int i = 0; i < ySize; i++)
             {
                 Console.Write("\n");
@@ -77,7 +94,8 @@ namespace ConsoleApplication13
                 {
                     if (grid[i, j] == true)
                     {
-                        Console.Write((char)219);
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.Write((char)42);
                     }
                     else
                     {
@@ -86,6 +104,38 @@ namespace ConsoleApplication13
                 }
             }
         }
+
+        static void DrawGridWithDeceased(bool[,] grid, bool[,] deceased, int xSize = 20, int ySize = 20)
+        {
+            // Console.WriteLine("xsize:" + xSize);
+            // Console.WriteLine("gridx" + grid);
+            for (int i = 0; i < ySize; i++)
+            {
+                Console.Write("\n");
+                for (int j = 0; j < xSize; j++)
+                {
+                    if (grid[i, j] == true)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.Write((char)42);
+                    }
+                    else
+                    {
+                        if (deceased[i, j])
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.Write('.');
+                        }
+                        else
+                        {
+                            Console.Write(' ');
+                        }
+
+                    }
+                }
+            }
+        }
+
         static bool IsValid(int xchecker, int ychecker, int xLimit = 20, int yLimit = 20)
         {
             bool valid = false;
@@ -96,7 +146,7 @@ namespace ConsoleApplication13
             }
             return valid;
         }
-        static bool[,] EvaluateGrid(bool[,] grid, int xSize = 20, int ySize =20)
+        static bool[,] EvaluateGrid(bool[,] grid, int xSize = 20, int ySize = 20)
         {
 
             bool[,] result = new bool[ySize, xSize];
@@ -111,31 +161,31 @@ namespace ConsoleApplication13
                     {
                         LiveNeighbors++;
                     }
-                    if (IsValid(x-1, y, xSize, ySize) && grid[y, x - 1] == true)
+                    if (IsValid(x - 1, y, xSize, ySize) && grid[y, x - 1] == true)
                     {
                         LiveNeighbors++;
                     }
-                    if (IsValid(x - 1, y +1, xSize, ySize) && grid[y + 1, x - 1] == true)
+                    if (IsValid(x - 1, y + 1, xSize, ySize) && grid[y + 1, x - 1] == true)
                     {
                         LiveNeighbors++;
                     }
-                    if (IsValid(x , y- 1, xSize, ySize) && grid[y - 1, x] == true)
+                    if (IsValid(x, y - 1, xSize, ySize) && grid[y - 1, x] == true)
                     {
                         LiveNeighbors++;
                     }
-                    if (IsValid(x , y+ 1, xSize, ySize) && grid[y + 1, x] == true)
+                    if (IsValid(x, y + 1, xSize, ySize) && grid[y + 1, x] == true)
                     {
                         LiveNeighbors++;
                     }
-                    if (IsValid(x + 1, y - 1,xSize, ySize) && grid[y - 1, x + 1] == true)
+                    if (IsValid(x + 1, y - 1, xSize, ySize) && grid[y - 1, x + 1] == true)
                     {
                         LiveNeighbors++;
                     }
-                    if (IsValid(x+ 1, y ,xSize, ySize) && grid[y, x + 1] == true)
+                    if (IsValid(x + 1, y, xSize, ySize) && grid[y, x + 1] == true)
                     {
                         LiveNeighbors++;
                     }
-                    if (IsValid(x + 1, y + 1,xSize,ySize) && grid[y + 1, x + 1] == true)
+                    if (IsValid(x + 1, y + 1, xSize, ySize) && grid[y + 1, x + 1] == true)
                     {
                         LiveNeighbors++;
                     }
@@ -158,21 +208,93 @@ namespace ConsoleApplication13
             }
             return result;
         }
+
+        static bool[,] EvaluateGridWithDeceased(bool[,] grid, out bool[,] deceased, int xSize = 20, int ySize = 20)
+        {
+
+            bool[,] dying = getBool(xSize, ySize, false);
+
+            bool[,] result = new bool[ySize, xSize];
+            int LiveNeighbors = 0;
+            // Console.Write("\nHere's the life count");
+            for (int y = 0; y < ySize; y++)
+            {
+                for (int x = 0; x < xSize; x++)
+                {
+                    LiveNeighbors = 0;
+                    if (IsValid(x - 1, y - 1, xSize, ySize) && grid[y - 1, x - 1] == true)
+                    {
+                        LiveNeighbors++;
+                    }
+                    if (IsValid(x - 1, y, xSize, ySize) && grid[y, x - 1] == true)
+                    {
+                        LiveNeighbors++;
+                    }
+                    if (IsValid(x - 1, y + 1, xSize, ySize) && grid[y + 1, x - 1] == true)
+                    {
+                        LiveNeighbors++;
+                    }
+                    if (IsValid(x, y - 1, xSize, ySize) && grid[y - 1, x] == true)
+                    {
+                        LiveNeighbors++;
+                    }
+                    if (IsValid(x, y + 1, xSize, ySize) && grid[y + 1, x] == true)
+                    {
+                        LiveNeighbors++;
+                    }
+                    if (IsValid(x + 1, y - 1, xSize, ySize) && grid[y - 1, x + 1] == true)
+                    {
+                        LiveNeighbors++;
+                    }
+                    if (IsValid(x + 1, y, xSize, ySize) && grid[y, x + 1] == true)
+                    {
+                        LiveNeighbors++;
+                    }
+                    if (IsValid(x + 1, y + 1, xSize, ySize) && grid[y + 1, x + 1] == true)
+                    {
+                        LiveNeighbors++;
+                    }
+                    //Console.Write(LiveNeighbors);
+
+                    if (LiveNeighbors > 2 || LiveNeighbors < 3)
+                    {
+                        result[y, x] = false;
+                        if (grid[y, x]) //was alive, now is dying
+                            dying[y, x] = true;
+                    }
+                    if (LiveNeighbors == 3)
+                    { result[y, x] = true; }
+                    if (grid[y, x] == true)
+                    {
+                        if (LiveNeighbors == 2)
+                        {
+                            result[y, x] = true;
+                        }
+                    }
+                }
+            }
+            deceased = dying;
+            return result;
+        }
         static void Main(string[] args)
         {
-           // Console.SetWindowSize(200, 150);
-            int xSize = 155;
-            int ySize = 35;
-            int sleep = (1000 / 60) * 2;
-            bool [,] grid = GetRandomGrid(xSize,ySize, 2000);
-            DrawGrid(grid, xSize, ySize);
+            // Console.SetWindowSize(200, 150);
+            int xSize = 70;
+            int ySize = 30;
+            int sleep = (1000 / 60)*4;
+            int population = 600;
+            bool[,] grid = GetRandomGrid(xSize, ySize, population);
+            bool[,] deceased = getBool(xSize, ySize, false);
+            DrawGridWithDeceased(grid, deceased, xSize, ySize);
             Console.ReadLine();
             for (int i = 0; i < 5000; i++)
             {
                 Console.Clear();
-                grid = EvaluateGrid(grid,xSize,ySize);
-                DrawGrid(grid,xSize,ySize);
+                //grid = EvaluateGrid(grid, xSize, ySize);
+                grid = EvaluateGridWithDeceased(grid, out deceased, xSize, ySize);
                 System.Threading.Thread.Sleep(sleep);
+                DrawGridWithDeceased(grid, deceased, xSize, ySize);
+               
             }
             Console.ReadLine();
         }
